@@ -25,50 +25,86 @@ var firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 
-var data = [
+var topics = [
   {
-    x: 100,
-    y: 100,
-    w: 200,
-    h: 100,
-    title: "hello world!",
-    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ante libero, bibendum quis fringilla in, volutpat eu sem. Nam eget ex quis diam lobortis volutpat. Quisque aliquet risus non enim vulputate, nec porttitor lorem pretium. Nulla rutrum metus sit amet interdum porttitor. Phasellus consequat metus ut nibh placerat, ut placerat quam sodales. Aliquam nec hendrerit tellus. Duis ut justo nibh. Cras porta justo quis turpis auctor, ac tincidunt eros imperdiet. Maecenas eu nisi felis. Sed nisl ex, porttitor eu elit eu, vehicula interdum nunc. Donec mi enim, cursus quis dignissim eu, vestibulum eget libero."
+    title: "hello world",
+    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ante libero, bibendum quis fringilla in, volutpat eu sem. Nam eget ex quis diam lobortis volutpat. Quisque aliquet risus non enim vulputate, nec porttitor lorem pretium. Nulla rutrum metus sit amet interdum porttitor. Phasellus consequat metus ut nibh placerat, ut placerat quam sodales."
   },
   {
-    x: 300,
-    y: 250,
-    w: 100,
-    h: 50,
     title: "foo bar baz!",
-    content: "Nullam erat lorem, ornare eget tincidunt in, blandit vitae ex. Praesent efficitur eget dui sit amet pretium. Curabitur suscipit ut dui ultrices convallis. Morbi eget pharetra nisl, nec consequat quam. Aliquam finibus mi arcu, et scelerisque enim malesuada vitae. Suspendisse sodales nibh sed augue sollicitudin, non faucibus magna auctor. Aenean augue ipsum, facilisis vel ligula quis, dapibus rutrum risus. Curabitur a malesuada justo. Praesent nisl ex, volutpat et elit eu, porttitor cursus velit. Morbi aliquam, turpis id interdum sollicitudin, diam arcu consequat purus, posuere elementum odio augue sed urna. Integer posuere dapibus tristique. Curabitur aliquet sed nisi ut blandit. Pellentesque ac sollicitudin nulla, ut commodo orci. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    content: "Nullam erat lorem, ornare eget tincidunt in, blandit vitae ex. Praesent efficitur eget dui sit amet pretium. Curabitur suscipit ut dui ultrices convallis. Morbi eget pharetra nisl, nec consequat quam. Aliquam finibus mi arcu, et scelerisque enim malesuada vitae. Suspendisse sodales nibh sed augue sollicitudin, non faucibus magna auctor."
   },
   {
-    x: 450,
-    y: 0,
-    w: 100,
-    h: 75,
     title: "third!",
-    content: "Integer efficitur cursus diam, et viverra orci aliquam eget. Integer in nibh vitae dui sodales pellentesque vitae quis orci. Vestibulum nec est ornare, congue quam id, finibus magna. Cras convallis mi et mi hendrerit, ut bibendum arcu gravida. Vivamus purus dolor, tempor non risus ac, dignissim pretium lacus. Vivamus et lacus orci. Suspendisse pulvinar lacus libero, ut varius diam sodales sit amet. Aenean in rhoncus purus. Quisque ut mauris quis massa ullamcorper maximus."
+    content: "Integer efficitur cursus diam, et viverra orci aliquam eget. Integer in nibh vitae dui sodales pellentesque vitae quis orci. Vestibulum nec est ornare, congue quam id, finibus magna. Cras convallis mi et mi hendrerit, ut bibendum arcu gravida. Vivamus purus dolor, tempor non risus ac, dignissim pretium lacus. Vivamus et lacus orci."
   }
 ];
 
-var db = firebase.database();
-var nodesRef = db.ref('nodes');
+// Here, each array of replies corresponds to the respective topic in the array above
+// but this gets flatten out when pushing to firebase
+var replies = [
+  [
+    {
+      content: "Praesent ut rhoncus nibh. Vestibulum vitae consectetur diam. Morbi nec porttitor tellus"
+    },
+    {
+      content: "Aliquam tincidunt, metus sed semper accumsan, est dolor maximus dui, ut ullamcorper diam turpis et mi."
+    },
+    {
+      content: "Mauris fermentum feugiat sem, sit amet aliquam mi sagittis sed."
+    }
+  ],
+  [
+    {
+      content: "Sed vitae auctor ligula, et laoreet nisi."
+    },
+    {
+      content: "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vivamus massa metus, molestie eget porta eu, vehicula in libero."
+    }
+  ],
+  [
+    {
+      content: "Vestibulum fermentum mattis erat. Sed at diam in ex cursus condimentum. Suspendisse potenti. Nullam fringilla lectus tempus libero posuere, quis semper orci semper."
+    }
+  ]
+]
 
-nodesRef.set({})
-  .then(function() {
-    var updates = {};
-    data.forEach(function(d) {
-      updates[nodesRef.push().key] = d;
-    })
-    nodesRef.update(updates).then(function() {
-      db.ref('transform').set({
-        k: 1,
-        x: 0,
-        y: 0
-      }).then(function() {
-        process.exit();
-      });
+var db = firebase.database();
+
+// Reset db
+db.ref('/').set({
+  topics: {},
+  replies: {}
+}).then(() => {
+
+  // Reinitialize topics and replies
+  var topicsRef = db.ref('topics');
+  var repliesRef = db.ref('replies');
+
+  var topicsUpdates = {};
+  var repliesUpdates = {};
+
+  topics.forEach((topic, idx) => {
+    var topicKey = topicsRef.push().key;
+    topicsUpdates[topicKey] = topic;
+
+    var topicReplies = replies[idx];
+    topicReplies.forEach((reply) => {
+      var replyKey = repliesRef.push().key
+      repliesUpdates[replyKey] = { parent: topicKey, ...reply }
+    });
+
+  });
+
+  topicsRef.update(topicsUpdates).then(() => {
+    repliesRef.update(repliesUpdates).then(() => {
+      process.exit();
     });
   });
+
+});
+
+
+
+
  
