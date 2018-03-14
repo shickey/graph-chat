@@ -91,7 +91,7 @@ db.ref('/').set({
     var topicReplies = replies[idx];
     topicReplies.forEach((reply) => {
       var replyKey = repliesRef.push().key
-      repliesUpdates[replyKey] = { parent: topicKey, ...reply }
+      repliesUpdates[replyKey] = { topic: topicKey, parent: null, ...reply }
     });
 
   });

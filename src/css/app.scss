@@ -77,44 +77,27 @@ body {
 }
 
 /* Graph Nodes */
-.node {
-  position: absolute;
-  border-right: 3px solid darken($node-color, 10%);
-  border-bottom: 3px solid darken($node-color, 10%);
-  border-left: 3px solid darken($node-color, 5%);
-  border-top: 3px solid darken($node-color, 5%);
-  background-color: $node-color;
-  padding: 0 4px;
-  overflow: hidden;
-}
+// .node {
+//   position: absolute;
+//   border-right: 3px solid darken($node-color, 10%);
+//   border-bottom: 3px solid darken($node-color, 10%);
+//   border-left: 3px solid darken($node-color, 5%);
+//   border-top: 3px solid darken($node-color, 5%);
+//   background-color: $node-color;
+//   padding: 0 4px;
+//   overflow: hidden;
+// }
 
-.node.selected {
-  background-color: $node-selected-color;
-  border-right: 3px solid darken($node-selected-color, 10%);
-  border-bottom: 3px solid darken($node-selected-color, 10%);
-  border-left: 3px solid darken($node-selected-color, 5%);
-  border-top: 3px solid darken($node-selected-color, 5%);
-}
+svg {
+  .nodes {
+    fill: #666;
+    stroke: black;
+  }
 
-.node-title {
-  width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  word-break: break-all; 
-  word-wrap: break-word;
-  text-overflow: ellipsis;
-}
-
-.node-title h3 {
-  display: inline-block;
-  font-family: $app-title-font;
-  margin: 5px 0;
-}
-
-.node-content {
-  width: 100%;
-  overflow: hidden;
-  font-size: 13px;
+  .links {
+    stroke: #999;
+    stroke-width: 3;
+  }
 }
 
 /* Right column */
@@ -123,35 +106,6 @@ body {
   background-color: $info-bg-color;
   color: $info-text-color;
   padding: 0 18px;
-}
-
-.info h1 {
-  text-align: center;
-}
-
-.form-group {
-  margin-bottom: 13px;
-}
-
-label, input, textarea {
-  width: 100%;
-}
-
-label {
-  font-family: $app-font;
-}
-
-input, textarea {
-  font-family: $app-font;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 5px;
-}
-
-textarea {
-  min-height: 12em;
-  resize: vertical;
 }
 
 /* General Utilities */
