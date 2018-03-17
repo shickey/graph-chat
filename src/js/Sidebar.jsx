@@ -24,17 +24,40 @@ const Sidebar = ({selectedNode}) => {
   }
 
   var textBoxes = [];
-  path.forEach( n => {
-    textBoxes.push(
-      <div className="discuss-element">
-        <p>{n.content}</p>
-      </div>
-    )
+  path.forEach( (n, idx) => {
+    if (idx == 0) {
+      textBoxes.push(
+        <div className="discuss-element">
+          <div className="discuss-element-header">
+            <img src="img/pizza_square.jpg" />
+            <span>{n.author} posted: </span>
+          </div>
+          <div className="discuss-element-content">
+            {n.content}
+          </div>
+        </div>
+      )
+    }
+    else {
+      textBoxes.push(
+        <div className="discuss-element">
+          <div className="discuss-element-header">
+            <img src="img/pizza_square.jpg" />
+            <span>{n.author} replied:</span>
+          </div>
+          <div className="discuss-element-content">
+            {n.content}
+          </div>
+        </div>
+      )
+    }
   })
 
 
   return (
-    <div className="node-editor">
+    <div className="sidebar">
+      <h2>Thread</h2>
+      <hr />
       {textBoxes}
     </div>
   )

@@ -2,12 +2,14 @@ export const nodes = [
   {
     id: 1,
     content: "Praesent ut rhoncus nibh. Vestibulum vitae consectetur diam. Morbi nec porttitor tellus",
-    distance: 1
+    distance: 1,
+    author: "Gustaaf Gunnhildr"
   },
   {
     id: 2,
     content: "Aliquam tincidunt, metus sed semper accumsan, est dolor maximus dui, ut ullamcorper diam turpis et mi.",
-    distance: 1
+    distance: 1,
+    author: "Radha Manisha"
   },
   {
     id: 3,
@@ -19,33 +21,39 @@ export const nodes = [
   {
     id: 4,
     content: "Sed vitae auctor ligula, et laoreet nisi.",
-    distance: 1
+    distance: 1,
+    author: "Vassiliki Aucaman"
   },
   {
     id: 5,
     content: "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vivamus massa metus, molestie eget porta eu, vehicula in libero.",
-    distance: 2
+    distance: 2,
+    author: "Sikke Fflur"
   },
   {
     id: 6,
     content: "Vestibulum fermentum mattis erat. Sed at diam in ex cursus condimentum. Suspendisse potenti. Nullam fringilla lectus tempus libero posuere, quis semper orci semper.",
-    distance: 2
+    distance: 2,
+    author: "Deepti Jonas"
   },
   {
     id: 7,
     content: "Nam bibendum sodales viverra.",
-    distance: 1
+    distance: 1,
+    author: "Omolara Cecilia"
   },
   {
     id: 8,
     content: "Nunc sapien ipsum, cursus sit amet cursus quis, auctor vitae erat. Vivamus fermentum ut lectus iaculis vehicula.",
-    distance: 2
+    distance: 2,
+    author: "Valentine Eunike"
   },
   {
     id: 9,
     content: "Phasellus tellus augue, malesuada eu erat quis, iaculis interdum nibh. Curabitur eros nunc, rutrum quis dolor vel, sodales rhoncus magna."
     ,
-    distance: 1
+    distance: 1,
+    author: "Sigimund Urban"
   }
 ];
 

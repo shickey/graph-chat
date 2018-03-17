@@ -59,17 +59,22 @@ body {
   font-family: $app-font;
 }
 
+hr {
+  width: 95%;
+  border-color: #777;
+}
+
 /* Overall Layout */
 
 .col-left {
   float: left;
-  width: 75%;
+  width: 70%;
   height: 100vh;
 }
 
 .col-right {
   float: left;
-  width: 25%;
+  width: 30%;
   height: 100vh;
 }
 
@@ -99,11 +104,6 @@ body {
   background-color: #333;
   border: 1px solid black;
   color: #ccc;
-
-  hr {
-    width: 95%;
-    border-color: #777;
-  }
 }
 
 .root-node {
@@ -153,10 +153,22 @@ svg {
 }
 
 .discuss-element {
-  padding: 11px;
-  margin: 21px 0;
+  padding: 4px 11px 11px;
+  margin: 11px 0;
   border-radius: 5px;
   background-color: $convo-element-color;
+}
+
+.discuss-element-header {
+  margin: 6px 0;
+  font-size: .8em;
+  img {
+    vertical-align: middle;
+    width: 36px;
+    height: 36px;
+    border-radius: 18px;
+    margin: 0 11px 0 0;
+  }
 }
 
 /* General Utilities */
