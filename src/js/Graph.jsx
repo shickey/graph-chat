@@ -75,7 +75,7 @@ class Graph extends React.Component {
             
             footer.append('img')
               .classed('node-avatar', true)
-              .attr('src', 'img/pizza_square.jpg')
+              .attr('src', 'img/' + n.avatar)
 
             footer.append('span')
               .text('posted by ' + n.author)
@@ -83,9 +83,15 @@ class Graph extends React.Component {
           }
           else if (n.distance == 1) {
             self.style('background-color', '#aaa');
+            self.append('img')
+              .classed('reply-avatar', true)
+              .attr('src', 'img/' + n.avatar)
           }
           else {
             self.style('background-color', '#444');
+            self.append('img')
+              .classed('reply-avatar', true)
+              .attr('src', 'img/' + n.avatar)
           }
         })
         .on('click', this.nodeClicked);

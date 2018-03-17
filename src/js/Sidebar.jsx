@@ -26,23 +26,24 @@ const Sidebar = ({selectedNode}) => {
   var textBoxes = [];
   path.forEach( (n, idx) => {
     if (idx == 0) {
-      textBoxes.push(
-        <div className="discuss-element">
-          <div className="discuss-element-header">
-            <img src="img/pizza_square.jpg" />
-            <span>{n.author} posted: </span>
-          </div>
-          <div className="discuss-element-content">
-            {n.content}
-          </div>
-        </div>
-      )
+      return; // Skip the original post
+      // textBoxes.push(
+      //   <div className="discuss-element">
+      //     <div className="discuss-element-header">
+      //       <img src={"img/" + n.avatar} />
+      //       <span>{n.author} posted: </span>
+      //     </div>
+      //     <div className="discuss-element-content">
+      //       {n.content}
+      //     </div>
+      //   </div>
+      // )
     }
     else {
       textBoxes.push(
         <div className="discuss-element">
           <div className="discuss-element-header">
-            <img src="img/pizza_square.jpg" />
+            <img src={"img/" + n.avatar} />
             <span>{n.author} replied:</span>
           </div>
           <div className="discuss-element-content">
