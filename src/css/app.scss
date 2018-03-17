@@ -111,10 +111,11 @@ body {
 }
 
 .node-avatar {
+  vertical-align: middle;
   width: 48px;
   height: 48px;
   border-radius: 24px;
-  margin: 11px 11px 0;
+  margin: 0 11px;
 }
 
 .node-title {
@@ -129,7 +130,7 @@ body {
 
 .node-footer {
   font-size: .8em;
-  margin-bottom: 11px;
+  margin: 11px 0;
 }
 
 svg {
