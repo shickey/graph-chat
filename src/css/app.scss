@@ -74,30 +74,41 @@ body {
 .graph-container {
   overflow: hidden;
   background-color: $canvas-color;
+  position: relative;
+  width: 100%;
+  height: 100vh;
 }
 
-/* Graph Nodes */
-// .node {
-//   position: absolute;
-//   border-right: 3px solid darken($node-color, 10%);
-//   border-bottom: 3px solid darken($node-color, 10%);
-//   border-left: 3px solid darken($node-color, 5%);
-//   border-top: 3px solid darken($node-color, 5%);
-//   background-color: $node-color;
-//   padding: 0 4px;
-//   overflow: hidden;
-// }
+.nodes-container {
+  position: absolute;
+  width: 100%;
+  height: 100vh;
+}
+
+.links-container {
+  position: absolute;
+}
+
+.node {
+  position: absolute;
+  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+  background-color: #333;
+  border: 1px solid black;
+}
+
+.root-node {
+  background-color: yellow;
+}
 
 svg {
-  .nodes {
-    fill: #666;
-    stroke: black;
-  }
 
   .links {
     stroke: #999;
     stroke-width: 3;
   }
+
 }
 
 /* Right column */

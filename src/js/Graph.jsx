@@ -78,9 +78,11 @@ var links = [
 var container = null;
 var canvas = null;
 
+var nodesContainer = null;
 var svg = null;
 
-var nodesSvg = null;
+// var nodesSvg = null;
+var drawnNodes = null;
 var linksSvg = null;
 
 // var zoom = null;
@@ -119,7 +121,41 @@ class Graph extends React.Component {
     //   .style('height', '100vh')
     //   .style('min-height', '100vh');
 
-    svg = d3.select('svg')
+    nodesContainer = d3.select('.nodes-container');
+
+    drawnNodes = nodesContainer.selectAll('.node')
+      .data(nodes)
+      .enter()
+        .append('div')
+        .classed('node', true)
+        .each( (n, idx, nodes) => {
+          if (n.id == rootId) {
+            // Draw the root
+            var self = d3.select(nodes[idx]) // React messes with `this`, so we get the DOM element directly
+            self.classed('root-node', true);
+            n.fx = 400;
+            n.fy = 400;
+          }
+        })
+
+    // nodesSvg = svg.append('g')
+    //     .attr('class', 'nodes')
+    //   .selectAll('circle')
+    //   .data(nodes)
+    //   .enter()
+    //     .append('circle')
+    //     .attr('r', 20)
+    //     .each( (n, idx, nodes) => {
+    //       if (n.id == rootId) {
+    //         // Draw the root
+    //         var self = d3.select(nodes[idx]) // React messes with `this`, so we get the DOM element directly
+    //         self.attr('class', 'root-node');
+    //         n.fx = 400;
+    //         n.fy = 400;
+    //       }
+    //     })
+
+    svg = d3.select('svg');
 
     linksSvg = svg.append('g')
         .attr('class', 'links')
@@ -127,17 +163,11 @@ class Graph extends React.Component {
       .data(links)
       .enter().append('line');
     
-    nodesSvg = svg.append('g')
-        .attr('class', 'nodes')
-      .selectAll('circle')
-      .data(nodes)
-      .enter().append('circle')
-        .attr('r', 20);
 
     var simulation = d3.forceSimulation()
       .force('link', d3.forceLink().id( d => d.id ))
       .force('charge', d3.forceManyBody())
-      .force('center', d3.forceCenter(200, 200))
+      .force('center', d3.forceCenter(400, 400))
       .force('collide', d3.forceCollide(40))
       .nodes(nodes)
       .on('tick', ticked);
@@ -151,9 +181,21 @@ class Graph extends React.Component {
         .attr('x2', d => d.target.x )
         .attr('y2', d => d.target.y )
 
-      nodesSvg
-        .attr('cx', d => d.x )
-        .attr('cy', d => d.y )
+      // nodesSvg
+      //   .attr('cx', d => d.x )
+      //   .attr('cy', d => d.y )
+
+      drawnNodes
+        .style('left', (d, idx, nodes) => {
+          var self = d3.select(nodes[idx]);
+          var rect = self.node().getBoundingClientRect();
+          return (d.x - (rect.width / 2.0)) + 'px';
+        })
+        .style('top', (d, idx, nodes) => {
+          var self = d3.select(nodes[idx]);
+          var rect = self.node().getBoundingClientRect();
+          return (d.y - (rect.height / 2.0)) + 'px';
+        })
     }
 
 
@@ -200,7 +242,8 @@ class Graph extends React.Component {
   render() {
     return (
       <div className="graph-container">
-        <svg width="100%" height="100vh"></svg>
+        <svg className="links-container" width="100%" height="100vh"></svg>
+        <div className="nodes-container"></div>
       </div>
     );
   }
