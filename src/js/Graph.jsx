@@ -32,7 +32,9 @@ var nodes = [
   },
   {
     id: 3,
-    content: "Mauris fermentum feugiat sem, sit amet aliquam mi sagittis sed."
+    title: "Hello world!",
+    content: "Sed est urna, pretium ac semper quis, dictum elementum ipsum. Integer malesuada condimentum ex vehicula congue. Nunc laoreet tortor lectus, at convallis neque fermentum non. Proin fringilla congue felis, a pulvinar dui luctus ut. Nam sagittis tempus metus, id consectetur dui commodo in. Vestibulum sit amet tortor turpis. Donec lobortis condimentum elit, eu euismod ante. Mauris porttitor in massa at imperdiet. Nam pretium elementum tortor in sagittis.",
+    author: "Branda Rajesh"
   },
   {
     id: 4,
@@ -81,7 +83,6 @@ var canvas = null;
 var nodesContainer = null;
 var svg = null;
 
-// var nodesSvg = null;
 var drawnNodes = null;
 var linksSvg = null;
 
@@ -103,12 +104,10 @@ var linksSvg = null;
 // var resizeOrigin = null;
 // var nodeDrag = null;
 
-// var self = null;
 
 class Graph extends React.Component {
 
   componentDidMount() {
-    // self = this;
     
     // db = this.props.firebase.database();
     
@@ -135,25 +134,29 @@ class Graph extends React.Component {
             self.classed('root-node', true);
             n.fx = 400;
             n.fy = 400;
+
+            self.append('div')
+              .classed('node-title', true)
+              .text(n.title)
+
+            self.append('hr')
+
+            self.append('div')
+              .classed('node-content', true)
+              .text(n.content)
+
+            var footer = self.append('div')
+              .classed('node-footer', true)
+            
+            footer.append('img')
+              .classed('node-avatar', true)
+              .attr('src', 'img/pizza_square.jpg')
+
+            footer.append('span')
+              .text('posted by ' + n.author)
+
           }
         })
-
-    // nodesSvg = svg.append('g')
-    //     .attr('class', 'nodes')
-    //   .selectAll('circle')
-    //   .data(nodes)
-    //   .enter()
-    //     .append('circle')
-    //     .attr('r', 20)
-    //     .each( (n, idx, nodes) => {
-    //       if (n.id == rootId) {
-    //         // Draw the root
-    //         var self = d3.select(nodes[idx]) // React messes with `this`, so we get the DOM element directly
-    //         self.attr('class', 'root-node');
-    //         n.fx = 400;
-    //         n.fy = 400;
-    //       }
-    //     })
 
     svg = d3.select('svg');
 
@@ -166,9 +169,14 @@ class Graph extends React.Component {
 
     var simulation = d3.forceSimulation()
       .force('link', d3.forceLink().id( d => d.id ))
-      .force('charge', d3.forceManyBody())
+      .force('charge', d3.forceManyBody(30))
       .force('center', d3.forceCenter(400, 400))
-      .force('collide', d3.forceCollide(40))
+      .force('collide', d3.forceCollide( (n, idx) => {
+        if (n.id == rootId) {
+            return 180;
+        }
+        return 80;
+      }))
       .nodes(nodes)
       .on('tick', ticked);
 
@@ -180,10 +188,6 @@ class Graph extends React.Component {
         .attr('y1', d => d.source.y )
         .attr('x2', d => d.target.x )
         .attr('y2', d => d.target.y )
-
-      // nodesSvg
-      //   .attr('cx', d => d.x )
-      //   .attr('cy', d => d.y )
 
       drawnNodes
         .style('left', (d, idx, nodes) => {

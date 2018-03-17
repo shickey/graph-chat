@@ -91,15 +91,45 @@ body {
 
 .node {
   position: absolute;
-  border-radius: 5px;
-  width: 30px;
-  height: 30px;
+  border-radius: 25px;
+  width: 50px;
+  min-height: 50px;
   background-color: #333;
   border: 1px solid black;
+  color: #ccc;
+
+  hr {
+    width: 95%;
+    border-color: #777;
+  }
 }
 
 .root-node {
-  background-color: yellow;
+  border-radius: 10px;
+  width: 300px;
+  min-height: 100px;
+}
+
+.node-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 24px;
+  margin: 11px 11px 0;
+}
+
+.node-title {
+  font-size: 1.2em;
+  padding: 6px 11px 0;
+}
+
+.node-content {
+  padding: 6px 11px;
+  font-size: .9em;
+}
+
+.node-footer {
+  font-size: .8em;
+  margin-bottom: 11px;
 }
 
 svg {
