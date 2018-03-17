@@ -37,6 +37,8 @@ $info-bg-color: #222028;
 $info-text-color: $node-color;
 $node-selected-color: #C9EBB5;
 
+$convo-element-color: lighten($info-bg-color, 10%);
+
 /* "Mountain" Color Scheme */
 // $node-color: #F1EBE1;
 // $canvas-color: lighten($node-color, 7%);
@@ -148,6 +150,13 @@ svg {
   background-color: $info-bg-color;
   color: $info-text-color;
   padding: 0 18px;
+}
+
+.discuss-element {
+  padding: 11px;
+  margin: 21px 0;
+  border-radius: 5px;
+  background-color: $convo-element-color;
 }
 
 /* General Utilities */
