@@ -20,6 +20,9 @@ const Sidebar = ({selectedNode}) => {
   var path = [{id: selectedNode.id, post: currentPost}];
   while (currentPost.parent !== null) {
     var parent = posts[currentPost.parent];
+    if (parent.parent === null) {
+      break; // Don't include the root node
+    }
     path.unshift({id: currentPost.parent, post: parent});
     currentPost = parent;
   }

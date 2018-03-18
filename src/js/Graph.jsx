@@ -30,6 +30,7 @@ var canvas = null;
 var nodesContainer = null;
 var svg = null;
 
+var topic = null;
 var posts = null;
 var links = null;
 
@@ -49,6 +50,7 @@ class Graph extends React.Component {
     
     // db = this.props.firebase.database();
 
+    topic = topics[1];
     posts = d3.entries(threads[1]);
 
     // Construct links
@@ -74,7 +76,7 @@ class Graph extends React.Component {
 
             self.append('div')
               .classed('node-title', true)
-              .text(n.value.title)
+              .text(topic.title)
 
             self.append('hr')
 
@@ -184,7 +186,7 @@ class Graph extends React.Component {
 
     var path = this.pathForNodeDatum(d);
 
-    if (d.distance == 0) {
+    if (d.value.parent === null) {
       d3.selectAll('.node')
         .classed('node-selected', false)
         .classed('node-unselected', false);
