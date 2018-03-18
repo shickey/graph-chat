@@ -102,9 +102,19 @@ hr {
   width: 48px;
   min-height: 48px;
   background-color: #333;
-  // border: 1px solid black;
   color: #ccc;
 }
+
+.node-selected {
+}
+
+.node-unselected {
+  background-color: #000;
+  img {
+    opacity: 0.3;
+  }
+}
+
 
 .root-node {
   border-radius: 10px;
@@ -146,9 +156,17 @@ hr {
 
 svg {
 
-  .links {
+  .link {
     stroke: #999;
-    stroke-width: 3;
+    stroke-width: 4;
+  }
+
+  .link-selected {
+  }
+
+  .link-unselected {
+    stroke: #666;
+    stroke-width: 2;
   }
 
 }
@@ -159,6 +177,12 @@ svg {
   background-color: $info-bg-color;
   color: $info-text-color;
   padding: 0 18px;
+}
+
+.sidebar {
+  h2 {
+    margin-bottom: 0;
+  }
 }
 
 .discuss-element {

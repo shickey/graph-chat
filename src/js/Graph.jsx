@@ -82,13 +82,11 @@ class Graph extends React.Component {
 
           }
           else if (n.distance == 1) {
-            self.style('background-color', '#aaa');
             self.append('img')
               .classed('reply-avatar', true)
               .attr('src', 'img/' + n.avatar)
           }
           else {
-            self.style('background-color', '#444');
             self.append('img')
               .classed('reply-avatar', true)
               .attr('src', 'img/' + n.avatar)
@@ -102,7 +100,9 @@ class Graph extends React.Component {
         .attr('class', 'links')
       .selectAll('line')
       .data(links)
-      .enter().append('line');
+      .enter()
+        .append('line')
+        .classed('link', true)
     
 
     var simulation = d3.forceSimulation()
@@ -151,8 +151,50 @@ class Graph extends React.Component {
     );
   }
 
+  pathForNodeDatum(d) {
+    var pathNodeIds = {}; // Simple object structure to simplify lookup later
+    var pathLinkIds = {};
+
+    pathNodeIds[d.id] = true;
+
+    var currentNode = d;
+
+    while (currentNode.distance !== 0) {
+      var link = links.find( l => l.source.id == currentNode.id );
+      pathLinkIds[link.id] = true;
+      var parent = nodes.find( n => n.id == link.target.id );
+      pathNodeIds[parent.id] = true;
+      currentNode = parent;
+    }
+
+    return {
+      nodeIds: pathNodeIds,
+      linkIds: pathLinkIds
+    }
+  }
+
   nodeClicked(d, i) {
-    this.props.onSelectNode(d.id)
+
+    var path = this.pathForNodeDatum(d);
+
+    if (d.distance == 0) {
+      d3.selectAll('.node')
+        .classed('node-selected', false)
+        .classed('node-unselected', false);
+      d3.selectAll('.link')
+        .classed('link-selected', false)
+        .classed('link-unselected', false);
+      this.props.onSelectNode(undefined);
+    }
+    else {
+      d3.selectAll('.node')
+        .classed('node-selected', datum => datum.id in path.nodeIds)
+        .classed('node-unselected', datum => !(datum.id in path.nodeIds))
+      d3.selectAll('.link')
+        .classed('link-selected', datum => datum.id in path.linkIds)
+        .classed('link-unselected', datum => !(datum.id in path.linkIds))
+      this.props.onSelectNode(d.id);
+    }
   }
   
 }

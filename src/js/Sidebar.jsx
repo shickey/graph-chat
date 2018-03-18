@@ -13,45 +13,32 @@ const Sidebar = ({selectedNode}) => {
   }
 
   // Construct the conversation nodes in order
-
   var currentNode = nodes.find( n => n.id == selectedNode.id )
-  var path = [currentNode];
-  while (currentNode.distance !== 0) {
-    var link = links.find( l => l.source.id == currentNode.id )
-    var parent = nodes.find( n => n.id == link.target.id )
-    path.unshift(parent)
-    currentNode = parent
+
+  var path = [];
+  if (currentNode.distance != 0) {
+    path = [currentNode];
+    while (currentNode.distance !== 1) { // Don't include the root node
+      var link = links.find( l => l.source.id == currentNode.id )
+      var parent = nodes.find( n => n.id == link.target.id )
+      path.unshift(parent)
+      currentNode = parent
+    }
   }
 
   var textBoxes = [];
   path.forEach( (n, idx) => {
-    if (idx == 0) {
-      return; // Skip the original post
-      // textBoxes.push(
-      //   <div className="discuss-element">
-      //     <div className="discuss-element-header">
-      //       <img src={"img/" + n.avatar} />
-      //       <span>{n.author} posted: </span>
-      //     </div>
-      //     <div className="discuss-element-content">
-      //       {n.content}
-      //     </div>
-      //   </div>
-      // )
-    }
-    else {
-      textBoxes.push(
-        <div className="discuss-element">
-          <div className="discuss-element-header">
-            <img src={"img/" + n.avatar} />
-            <span>{n.author} replied:</span>
-          </div>
-          <div className="discuss-element-content">
-            {n.content}
-          </div>
+    textBoxes.push(
+      <div className="discuss-element" key={n.id}>
+        <div className="discuss-element-header">
+          <img src={"img/" + n.avatar} />
+          <span>{n.author} replied:</span>
         </div>
-      )
-    }
+        <div className="discuss-element-content">
+          {n.content}
+        </div>
+      </div>
+    )
   })
 
 

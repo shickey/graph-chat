@@ -74,12 +74,12 @@ export const nodes = [
 // backwards through the links up to the root when displaying a
 // conversation linearly
 export const links = [
-  { source: 1, target: 3 },
-  { source: 2, target: 3 },
-  { source: 4, target: 3 },
-  { source: 5, target: 1 },
-  { source: 6, target: 1 },
-  { source: 7, target: 3 },
-  { source: 8, target: 4 },
-  { source: 9, target: 3 }
+  { id: 1, source: 1, target: 3 },
+  { id: 2, source: 2, target: 3 },
+  { id: 3, source: 4, target: 3 },
+  { id: 4, source: 5, target: 1 },
+  { id: 5, source: 6, target: 1 },
+  { id: 6, source: 7, target: 3 },
+  { id: 7, source: 8, target: 4 },
+  { id: 8, source: 9, target: 3 }
 ];
