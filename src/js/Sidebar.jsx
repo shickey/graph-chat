@@ -4,7 +4,8 @@ import { compose } from 'redux'
 import { firebaseConnect } from 'react-redux-firebase'
 
 // Test Data
-import { nodes, links } from './Data'
+// import { nodes, links } from './Data'
+import { topics, threads } from './Data'
 
 const Sidebar = ({selectedNode}) => {
 
@@ -13,17 +14,14 @@ const Sidebar = ({selectedNode}) => {
   }
 
   // Construct the conversation nodes in order
-  var currentNode = nodes.find( n => n.id == selectedNode.id )
+  var posts = threads[1]; // @TODO: Index is topic id, should be updated eventually
+  var currentPost = posts[selectedNode.id];
 
-  var path = [];
-  if (currentNode.distance != 0) {
-    path = [currentNode];
-    while (currentNode.distance !== 1) { // Don't include the root node
-      var link = links.find( l => l.source.id == currentNode.id )
-      var parent = nodes.find( n => n.id == link.target.id )
-      path.unshift(parent)
-      currentNode = parent
-    }
+  var path = [{id: selectedNode.id, post: currentPost}];
+  while (currentPost.parent !== null) {
+    var parent = posts[currentPost.parent];
+    path.unshift({id: currentPost.parent, post: parent});
+    currentPost = parent;
   }
 
   var textBoxes = [];
@@ -31,16 +29,15 @@ const Sidebar = ({selectedNode}) => {
     textBoxes.push(
       <div className="discuss-element" key={n.id}>
         <div className="discuss-element-header">
-          <img src={"img/" + n.avatar} />
-          <span>{n.author} replied:</span>
+          <img src={"img/" + n.post.avatar} />
+          <span>{n.post.author} replied:</span>
         </div>
         <div className="discuss-element-content">
-          {n.content}
+          {n.post.content}
         </div>
       </div>
     )
   })
-
 
   return (
     <div className="sidebar">

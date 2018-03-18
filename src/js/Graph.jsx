@@ -6,7 +6,8 @@ import { withFirebase } from 'react-redux-firebase'
 import { selectNode } from './actions'
 
 // Test Data
-import { nodes, links } from './Data'
+// import { nodes, links } from './Data'
+import { topics, threads } from './Data'
 
 /*
  * Graph Chat
@@ -29,6 +30,9 @@ var canvas = null;
 var nodesContainer = null;
 var svg = null;
 
+var posts = null;
+var links = null;
+
 var drawnNodes = null;
 var linksSvg = null;
 
@@ -44,17 +48,25 @@ class Graph extends React.Component {
   componentDidMount() {
     
     // db = this.props.firebase.database();
-    
+
+    posts = d3.entries(threads[1]);
+
+    // Construct links
+    links = posts.filter(p => (p.value.parent !== null)) // Ignore the root node
+      .map( (p, idx) => {
+        return { id: idx, source: p.key, target: p.value.parent }; // @TODO: Find a better id mechanism here
+      })
+
     nodesContainer = d3.select('.nodes-container');
 
     drawnNodes = nodesContainer.selectAll('.node')
-      .data(nodes)
+      .data(posts)
       .enter()
         .append('div')
         .classed('node', true)
         .each( (n, idx, nodes) => {
           var self = d3.select(nodes[idx]) // React messes with `this`, so we get the DOM element directly
-          if (n.distance == 0) {
+          if (n.value.parent === null) {
             // Draw the root
             self.classed('root-node', true);
             n.fx = 400;
@@ -62,34 +74,29 @@ class Graph extends React.Component {
 
             self.append('div')
               .classed('node-title', true)
-              .text(n.title)
+              .text(n.value.title)
 
             self.append('hr')
 
             self.append('div')
               .classed('node-content', true)
-              .text(n.content)
+              .text(n.value.content)
 
             var footer = self.append('div')
               .classed('node-footer', true)
             
             footer.append('img')
               .classed('node-avatar', true)
-              .attr('src', 'img/' + n.avatar)
+              .attr('src', 'img/' + n.value.avatar)
 
             footer.append('span')
-              .text('posted by ' + n.author)
+              .text('posted by ' + n.value.author)
 
-          }
-          else if (n.distance == 1) {
-            self.append('img')
-              .classed('reply-avatar', true)
-              .attr('src', 'img/' + n.avatar)
           }
           else {
             self.append('img')
               .classed('reply-avatar', true)
-              .attr('src', 'img/' + n.avatar)
+              .attr('src', 'img/' + n.value.avatar)
           }
         })
         .on('click', this.nodeClicked);
@@ -106,16 +113,16 @@ class Graph extends React.Component {
     
 
     var simulation = d3.forceSimulation()
-      .force('link', d3.forceLink().id( d => d.id ))
+      .force('link', d3.forceLink().id( d => d.key ))
       .force('charge', d3.forceManyBody(30))
       .force('center', d3.forceCenter(400, 400))
       .force('collide', d3.forceCollide( (n, idx) => {
-        if (n.distance == 0) {
+        if (n.value.parent === null) {
             return 180;
         }
         return 80;
       }))
-      .nodes(nodes)
+      .nodes(posts)
       .on('tick', ticked);
 
     simulation.force('link').links(links);
@@ -155,15 +162,15 @@ class Graph extends React.Component {
     var pathNodeIds = {}; // Simple object structure to simplify lookup later
     var pathLinkIds = {};
 
-    pathNodeIds[d.id] = true;
+    pathNodeIds[d.key] = true;
 
     var currentNode = d;
 
-    while (currentNode.distance !== 0) {
-      var link = links.find( l => l.source.id == currentNode.id );
+    while (currentNode.value.parent !== null) {
+      var link = links.find( l => l.source.key == currentNode.key );
       pathLinkIds[link.id] = true;
-      var parent = nodes.find( n => n.id == link.target.id );
-      pathNodeIds[parent.id] = true;
+      var parent = posts.find( p => p.key == link.target.key );
+      pathNodeIds[parent.key] = true;
       currentNode = parent;
     }
 
@@ -188,12 +195,12 @@ class Graph extends React.Component {
     }
     else {
       d3.selectAll('.node')
-        .classed('node-selected', datum => datum.id in path.nodeIds)
-        .classed('node-unselected', datum => !(datum.id in path.nodeIds))
+        .classed('node-selected', datum => datum.key in path.nodeIds)
+        .classed('node-unselected', datum => !(datum.key in path.nodeIds))
       d3.selectAll('.link')
         .classed('link-selected', datum => datum.id in path.linkIds)
         .classed('link-unselected', datum => !(datum.id in path.linkIds))
-      this.props.onSelectNode(d.id);
+      this.props.onSelectNode(d.key);
     }
   }
   
