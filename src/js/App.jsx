@@ -3,10 +3,12 @@ import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import { createStore, combineReducers, compose } from 'redux'
 import { reactReduxFirebase, firebaseReducer } from 'react-redux-firebase'
+import { HashRouter, Route } from 'react-router-dom'
 import firebase from 'firebase'
 import selectedNode from './reducers/selection'
-import Graph from './Graph.jsx'
-import Sidebar from './Sidebar.jsx'
+import Navbar from './Navbar.jsx'
+import Topic from './Topic.jsx'
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyBe1g2Dpa96RvbMRuwLa-ciG57Jc6ET0G0",
@@ -35,14 +37,12 @@ const store = createStoreWithFirebase(rootReducer, {});
 
 const App = () => (
   <Provider store={store}>
-    <div className="app-container">
-      <div className="col-left">
-        <Graph topicId={'-L7w8-Egmf1Q_R73i9Au'} />
+    <HashRouter>
+      <div className="app-container">
+        <Navbar />
+        <Route path="/topic/:topicId" component={Topic} />
       </div>
-      <div className="col-right info">
-        <Sidebar />
-      </div>
-    </div>
+    </HashRouter>
   </Provider>
 )
 

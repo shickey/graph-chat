@@ -66,6 +66,16 @@ hr {
 
 /* Overall Layout */
 
+.navbar {
+  background-color: darken($info-bg-color, 6%);
+  h1 {
+    font-size: 1.8em;
+    color: #ccc;
+    margin: 0;
+    padding: 11px 17px;
+  }
+}
+
 .col-left {
   float: left;
   width: 70%;
@@ -77,6 +87,8 @@ hr {
   width: 30%;
   height: 100vh;
 }
+
+/* Graph */
 
 .graph-container {
   overflow: hidden;
@@ -171,7 +183,8 @@ svg {
 
 }
 
-/* Right column */
+/* Sidebar */
+// @TODO: Clean up (esp. .info)
 
 .info {
   background-color: $info-bg-color;
