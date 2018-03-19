@@ -9,10 +9,6 @@ const Sidebar = ({topics, posts, selectedNode}) => {
     return null;
   }
 
-  var selectedNode = selectedNode;
-  var topics = topics;
-  var posts = posts;
-
   var topicId = Object.keys(topics)[0];
   var topicPosts = posts[topicId]; // @TODO: Index is topic id, should be updated eventually
 
