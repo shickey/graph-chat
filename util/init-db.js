@@ -26,6 +26,11 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 
+// Avatar images from roundicons
+
+// @TODO: Move author info out of topics and posts?
+//        Maybe make authors an object inside each topic/set of posts?
+
 // @NOTE: The keys used in the topics and posts objects get
 //        replaced by firebase keys when pushing to the DB.
 //        But they're still useful in this context since they

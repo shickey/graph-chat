@@ -5,10 +5,6 @@ import * as d3 from 'd3'
 import { withFirebase } from 'react-redux-firebase'
 import { selectNode } from './actions'
 
-// Test Data
-// import { nodes, links } from './Data'
-import { topics, threads } from './Data'
-
 /*
  * Graph Chat
  *
@@ -48,13 +44,25 @@ class Graph extends React.Component {
 
   componentDidMount() {
     
-    // db = this.props.firebase.database();
+    db = this.props.firebase.database();
 
-    topic = topics[1];
-    posts = d3.entries(threads[1]);
+    db.ref('topics').on('value', snapshot => {
+      var topics = snapshot.val();
+      var topicId = Object.keys(topics)[0];
+      topic = topics[topicId];
+
+      db.ref('posts/' + topicId).on('value', snapshot => {
+        posts = d3.entries(snapshot.val());
+        this.updateNodes();
+      })
+    })
+
+  }
+
+  updateNodes() {
 
     // Construct links
-    links = posts.filter(p => (p.value.parent !== null)) // Ignore the root node
+    links = posts.filter(p => (p.value.parent != null)) // Ignore the root node
       .map( (p, idx) => {
         return { id: idx, source: p.key, target: p.value.parent }; // @TODO: Find a better id mechanism here
       })
@@ -68,7 +76,7 @@ class Graph extends React.Component {
         .classed('node', true)
         .each( (n, idx, nodes) => {
           var self = d3.select(nodes[idx]) // React messes with `this`, so we get the DOM element directly
-          if (n.value.parent === null) {
+          if (n.value.parent == null) {
             // Draw the root
             self.classed('root-node', true);
             n.fx = 400;
@@ -119,7 +127,7 @@ class Graph extends React.Component {
       .force('charge', d3.forceManyBody(30))
       .force('center', d3.forceCenter(400, 400))
       .force('collide', d3.forceCollide( (n, idx) => {
-        if (n.value.parent === null) {
+        if (n.value.parent == null) {
             return 180;
         }
         return 80;
@@ -168,7 +176,7 @@ class Graph extends React.Component {
 
     var currentNode = d;
 
-    while (currentNode.value.parent !== null) {
+    while (currentNode.value.parent != null) {
       var link = links.find( l => l.source.key == currentNode.key );
       pathLinkIds[link.id] = true;
       var parent = posts.find( p => p.key == link.target.key );
@@ -186,7 +194,7 @@ class Graph extends React.Component {
 
     var path = this.pathForNodeDatum(d);
 
-    if (d.value.parent === null) {
+    if (d.value.parent == null) {
       d3.selectAll('.node')
         .classed('node-selected', false)
         .classed('node-unselected', false);

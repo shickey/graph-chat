@@ -3,24 +3,22 @@ import { connect } from 'react-redux'
 import { compose } from 'redux'
 import { firebaseConnect } from 'react-redux-firebase'
 
-// Test Data
-// import { nodes, links } from './Data'
-import { topics, threads } from './Data'
 
-const Sidebar = ({selectedNode}) => {
+const Sidebar = ({topics, posts, selectedNode}) => {
 
-  if (selectedNode.id === undefined) {
+  if (selectedNode.id === undefined || !topics || !posts) {
     return null;
   }
 
   // Construct the conversation nodes in order
-  var posts = threads[1]; // @TODO: Index is topic id, should be updated eventually
-  var currentPost = posts[selectedNode.id];
+  var topicId = Object.keys(topics)[0]
+  var topicPosts = posts[topicId]; // @TODO: Index is topic id, should be updated eventually
+  var currentPost = topicPosts[selectedNode.id];
 
   var path = [{id: selectedNode.id, post: currentPost}];
-  while (currentPost.parent !== null) {
-    var parent = posts[currentPost.parent];
-    if (parent.parent === null) {
+  while (currentPost.parent != null) {
+    var parent = topicPosts[currentPost.parent];
+    if (parent.parent == null) {
       break; // Don't include the root node
     }
     path.unshift({id: currentPost.parent, post: parent});
@@ -60,7 +58,8 @@ const mapStateToProps = state => {
 
 export default compose(
   firebaseConnect([
-    'nodes'
+    'topics',
+    'posts'
   ]),
   connect(mapStateToProps)
 )(Sidebar);
