@@ -54,6 +54,11 @@ class Graph extends React.Component {
     }
   }
 
+  componentWillUnmount() {
+    this.props.onSelectNode(undefined);
+    initialized = false;
+  }
+
   updateNodes() {
 
     // Construct links

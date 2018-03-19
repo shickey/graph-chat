@@ -3,11 +3,12 @@ import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import { createStore, combineReducers, compose } from 'redux'
 import { reactReduxFirebase, firebaseReducer } from 'react-redux-firebase'
-import { HashRouter, Route } from 'react-router-dom'
+import { HashRouter, Route, Redirect, Switch } from 'react-router-dom'
 import firebase from 'firebase'
 import selectedNode from './reducers/selection'
 import Navbar from './Navbar.jsx'
 import Topic from './Topic.jsx'
+import Dashboard from './Dashboard.jsx'
 
 
 const firebaseConfig = {
@@ -40,7 +41,10 @@ const App = () => (
     <HashRouter>
       <div className="app-container">
         <Navbar />
-        <Route path="/topic/:topicId" component={Topic} />
+        <Switch>
+          <Route exact path="/" component={Dashboard} />
+          <Route path="/topic/:topicId" component={Topic} />
+        </Switch>
       </div>
     </HashRouter>
   </Provider>

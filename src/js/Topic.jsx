@@ -10,7 +10,7 @@ const Topic = ({match, topicId}) => {
         <Graph topicId={match.params.topicId} />
       </div>
       <div className="col-right info">
-        <Sidebar />
+        <Sidebar topicId={match.params.topicId} />
       </div>
     </div>
   )

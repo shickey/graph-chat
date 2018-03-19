@@ -40,8 +40,10 @@ const topics = {
   1: {
     title: "Hello world!",
     root: 3,
-    author: "Branda Rajesh",
-    avatar: "user-18.png"
+  },
+  2: {
+    title: "Foo bar baz!",
+    root: 1,
   }
 }
 
@@ -122,6 +124,42 @@ const posts = {
       parent: 3,
       children: {}
     }
+  },
+  2: { // Topic ID
+    1: { // Post IDs
+      content: "Nam varius, purus et malesuada dapibus, arcu ipsum sollicitudin lectus, vitae tempor enim dui eget quam. Sed nisi nisl, fermentum id lobortis vitae, consectetur sed orci. Pellentesque congue ligula nibh, id hendrerit orci iaculis non. Vivamus commodo mattis iaculis.",
+      author: "Eldon Hildigardis",
+      avatar: "user-22.png",
+      parent: null,
+      children: {
+        2: true
+      }
+    },
+    2: {
+      content: "Fusce maximus venenatis magna vitae tempus. Interdum et malesuada fames ac ante ipsum primis in faucibus.",
+      author: "Rosa Chan",
+      avatar: "user-3.png",
+      parent: 1,
+      children: {
+        3: true
+      }
+    },
+    3: {
+      content: "Sed ullamcorper quis augue nec euismod. Integer consectetur dolor elit, varius commodo est cursus vitae. Phasellus rutrum dignissim sem, et euismod est ornare nec. Sed nec arcu sem. Nunc tristique elementum sapien, ac commodo ex vestibulum sed. Mauris eu massa non lorem rutrum sagittis.",
+      author: "Ben Rhoda",
+      avatar: "user-9.png",
+      parent: 2,
+      children: {
+        4: true
+      }
+    },
+    4: {
+      content: "Mauris ut aliquet leo. Quisque vitae tincidunt lorem, id tincidunt sapien.",
+      author: "Teuta Bityah",
+      avatar: "user-11.png",
+      parent: 3,
+      children: {}
+    },
   }
 }
 
@@ -149,6 +187,8 @@ db.ref('/').set({
     var idMapping = {}; // Key is the id for the post in the structure
                         // written at the top of this file, value is the
                         // firebase key it will live at when pushed
+
+    var rootPost = null;
     Object.keys(topicPosts).forEach( (postId, idx) => {
       idMapping[postId] = postsRef.push().key;
     })
@@ -156,7 +196,10 @@ db.ref('/').set({
     Object.keys(topicPosts).forEach( (postId, idx) => {
       var post = Object.assign({}, topicPosts[postId]); // Create a copy, just for good measure
       if (post.parent) {
-        post.parent = idMapping[post.parent]
+        post.parent = idMapping[post.parent];
+      }
+      else {
+        rootPost = post;
       }
       if (post.children) {
         var newChildren = {};
@@ -170,6 +213,9 @@ db.ref('/').set({
 
     var newTopic = Object.assign({}, topics[topicId]);
     newTopic.root = idMapping[newTopic.root];
+    newTopic.content = rootPost.content;
+    newTopic.author = rootPost.author;
+    newTopic.avatar = rootPost.avatar;
     topicsUpdates[topicKey] = newTopic;
 
   })

@@ -1,23 +1,20 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { compose } from 'redux'
-import { firebaseConnect, isLoaded } from 'react-redux-firebase'
+import { firebaseConnect, isLoaded, getVal } from 'react-redux-firebase'
 
-const Sidebar = ({topics, posts, selectedNode}) => {
+const Sidebar = ({topic, posts, selectedNode}) => {
 
-  if (selectedNode.id === undefined || !topics || !posts) {
+  if (selectedNode.id === undefined || !topic || !posts) {
     return null;
   }
 
-  var topicId = Object.keys(topics)[0];
-  var topicPosts = posts[topicId]; // @TODO: Index is topic id, should be updated eventually
-
   // Construct the conversation nodes in order
-  var currentPost = topicPosts[selectedNode.id];
+  var currentPost = posts[selectedNode.id];
 
   var path = [{id: selectedNode.id, post: currentPost}];
   while (currentPost.parent != null) {
-    var parent = topicPosts[currentPost.parent];
+    var parent = posts[currentPost.parent];
     if (parent.parent == null) {
       break; // Don't include the root node
     }
@@ -50,18 +47,20 @@ const Sidebar = ({topics, posts, selectedNode}) => {
 
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, props) => {
   return {
     selectedNode: state.selectedNode,
-    topics: state.firebase.data.topics,
-    posts: state.firebase.data.posts
-  }
+    topic: getVal(state.firebase, `data/topics/${props.topicId}`),
+    posts: getVal(state.firebase, `data/posts/${props.topicId}`)
+  } 
 }
 
 export default compose(
-  firebaseConnect([
-    'topics',
-    'posts'
-  ]),
+  firebaseConnect((props) => {
+    return [
+    `topics/${props.topicId}`,
+    `posts/${props.topicId}`,
+    ]
+  }),
   connect(mapStateToProps)
-)(Sidebar);
+)(Sidebar)
