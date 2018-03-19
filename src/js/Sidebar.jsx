@@ -10,9 +10,10 @@ const Sidebar = ({topics, posts, selectedNode}) => {
     return null;
   }
 
-  // Construct the conversation nodes in order
-  var topicId = Object.keys(topics)[0]
+  var topicId = Object.keys(topics)[0];
   var topicPosts = posts[topicId]; // @TODO: Index is topic id, should be updated eventually
+
+  // Construct the conversation nodes in order
   var currentPost = topicPosts[selectedNode.id];
 
   var path = [{id: selectedNode.id, post: currentPost}];
@@ -52,7 +53,8 @@ const Sidebar = ({topics, posts, selectedNode}) => {
 const mapStateToProps = state => {
   return {
     selectedNode: state.selectedNode,
-    nodes: state.firebase.data.nodes
+    topics: state.firebase.data.topics,
+    posts: state.firebase.data.posts
   }
 }
 
