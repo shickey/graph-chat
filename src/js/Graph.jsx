@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { compose } from 'redux'
 import * as d3 from 'd3'
-import { withFirebase } from 'react-redux-firebase'
+import { firebaseConnect, isLoaded } from 'react-redux-firebase'
 import { selectNode } from './actions'
 
 /*
@@ -16,10 +16,6 @@ import { selectNode } from './actions'
  *
  */
  
-var db = null;
-
-// var selectedNode = null;
-
 var container = null;
 var canvas = null;
 
@@ -35,6 +31,8 @@ var linksSvg = null;
 
 // var zoom = null;
 
+var initialized = false;
+
 class Graph extends React.Component {
 
   constructor(props) {
@@ -42,21 +40,30 @@ class Graph extends React.Component {
     this.nodeClicked = this.nodeClicked.bind(this);
   }
 
-  componentDidMount() {
-    
-    db = this.props.firebase.database();
+  shouldComponentUpdate() {
+    return !initialized;
+  }
 
-    db.ref('topics').on('value', snapshot => {
-      var topics = snapshot.val();
-      var topicId = Object.keys(topics)[0];
-      topic = topics[topicId];
+  componentDidUpdate() {
+    console.log("did update");
+    if (isLoaded(this.props.topics)) {
+      console.log("topics loaded")
+    }
+    if (isLoaded(this.props.posts)) {
+      console.log("posts loaded")
+    }
+    if (isLoaded(this.props.topics) && isLoaded(this.props.posts)) {
+      console.log("updating");
 
-      db.ref('posts/' + topicId).on('value', snapshot => {
-        posts = d3.entries(snapshot.val());
-        this.updateNodes();
-      })
-    })
+      var topicId = Object.keys(this.props.topics)[0];
+      topic = this.props.topics[topicId];
 
+      posts = d3.entries(this.props.posts[topicId]);
+
+      this.updateNodes()
+
+      initialized = true;
+    }
   }
 
   updateNodes() {
@@ -216,7 +223,12 @@ class Graph extends React.Component {
   
 }
 
-const mapStateToProps = state => { return {} }
+const mapStateToProps = state => {
+  return {
+    topics: state.firebase.data.topics,
+    posts: state.firebase.data.posts
+  } 
+}
 
 const mapDispatchToProps = dispatch => {
   return {
@@ -227,6 +239,9 @@ const mapDispatchToProps = dispatch => {
 }
 
 export default compose(
-  withFirebase,
+  firebaseConnect([
+    'topics',
+    'posts'
+  ]),
   connect(mapStateToProps, mapDispatchToProps)
 )(Graph)

@@ -1,14 +1,17 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { compose } from 'redux'
-import { firebaseConnect } from 'react-redux-firebase'
-
+import { firebaseConnect, isLoaded } from 'react-redux-firebase'
 
 const Sidebar = ({topics, posts, selectedNode}) => {
 
   if (selectedNode.id === undefined || !topics || !posts) {
     return null;
   }
+
+  var selectedNode = selectedNode;
+  var topics = topics;
+  var posts = posts;
 
   var topicId = Object.keys(topics)[0];
   var topicPosts = posts[topicId]; // @TODO: Index is topic id, should be updated eventually
@@ -48,6 +51,7 @@ const Sidebar = ({topics, posts, selectedNode}) => {
       {textBoxes}
     </div>
   )
+
 }
 
 const mapStateToProps = state => {
