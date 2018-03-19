@@ -25,79 +25,152 @@ var firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 
-var topics = [
-  {
-    title: "hello world",
-    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ante libero, bibendum quis fringilla in, volutpat eu sem. Nam eget ex quis diam lobortis volutpat. Quisque aliquet risus non enim vulputate, nec porttitor lorem pretium. Nulla rutrum metus sit amet interdum porttitor. Phasellus consequat metus ut nibh placerat, ut placerat quam sodales."
-  },
-  {
-    title: "foo bar baz!",
-    content: "Nullam erat lorem, ornare eget tincidunt in, blandit vitae ex. Praesent efficitur eget dui sit amet pretium. Curabitur suscipit ut dui ultrices convallis. Morbi eget pharetra nisl, nec consequat quam. Aliquam finibus mi arcu, et scelerisque enim malesuada vitae. Suspendisse sodales nibh sed augue sollicitudin, non faucibus magna auctor."
-  },
-  {
-    title: "third!",
-    content: "Integer efficitur cursus diam, et viverra orci aliquam eget. Integer in nibh vitae dui sodales pellentesque vitae quis orci. Vestibulum nec est ornare, congue quam id, finibus magna. Cras convallis mi et mi hendrerit, ut bibendum arcu gravida. Vivamus purus dolor, tempor non risus ac, dignissim pretium lacus. Vivamus et lacus orci."
-  }
-];
 
-// Here, each array of replies corresponds to the respective topic in the array above
-// but this gets flatten out when pushing to firebase
-var replies = [
-  [
-    {
-      content: "Praesent ut rhoncus nibh. Vestibulum vitae consectetur diam. Morbi nec porttitor tellus"
+// @NOTE: The keys used in the topics and posts objects get
+//        replaced by firebase keys when pushing to the DB.
+//        But they're still useful in this context since they
+//        allow us to define keyed relationships without knowing
+//        the keys beforehand.
+const topics = {
+  1: {
+    title: "Hello world!",
+    root: 3,
+    author: "Branda Rajesh",
+    avatar: "user-18.png"
+  }
+}
+
+const posts = {
+  1: { // Topic ID
+    1: { // Post IDs
+      content: "Praesent ut rhoncus nibh. Vestibulum vitae consectetur diam. Morbi nec porttitor tellus",
+      author: "Gustaaf Gunnhildr",
+      avatar: "user-0.png",
+      parent: 3,
+      children: {
+        5: true,
+        6: true
+      }
     },
-    {
-      content: "Aliquam tincidunt, metus sed semper accumsan, est dolor maximus dui, ut ullamcorper diam turpis et mi."
+    2: {
+      content: "Aliquam tincidunt, metus sed semper accumsan, est dolor maximus dui, ut ullamcorper diam turpis et mi.",
+      author: "Radha Manisha",
+      avatar: "user-7.png",
+      parent: 3,
+      children: {}
     },
-    {
-      content: "Mauris fermentum feugiat sem, sit amet aliquam mi sagittis sed."
-    }
-  ],
-  [
-    {
-      content: "Sed vitae auctor ligula, et laoreet nisi."
+    3: {
+      content: "Sed est urna, pretium ac semper quis, dictum elementum ipsum. Integer malesuada condimentum ex vehicula congue. Nunc laoreet tortor lectus, at convallis neque fermentum non. Proin fringilla congue felis, a pulvinar dui luctus ut. Nam sagittis tempus metus, id consectetur dui commodo in. Vestibulum sit amet tortor turpis. Donec lobortis condimentum elit, eu euismod ante. Mauris porttitor in massa at imperdiet. Nam pretium elementum tortor in sagittis.",
+      author: "Branda Rajesh",
+      avatar: "user-18.png",
+      parent: null,
+      children: {
+        1 : true,
+        2 : true,
+        4 : true,
+        7 : true,
+        9 : true
+      }
     },
-    {
-      content: "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vivamus massa metus, molestie eget porta eu, vehicula in libero."
+    4: {
+      content: "Sed vitae auctor ligula, et laoreet nisi.",
+      author: "Vassiliki Aucaman",
+      avatar: "user-1.png",
+      parent: 3,
+      children: {
+        8: true
+      }
+    },
+    5: {
+      content: "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vivamus massa metus, molestie eget porta eu, vehicula in libero.",
+      author: "Sikke Fflur",
+      avatar: "user-22.png",
+      parent: 1,
+      children: {}
+    },
+    6: {
+      content: "Vestibulum fermentum mattis erat. Sed at diam in ex cursus condimentum. Suspendisse potenti. Nullam fringilla lectus tempus libero posuere, quis semper orci semper.",
+      author: "Deepti Jonas",
+      avatar: "user-16.png",
+      parent: 1,
+      children: {}
+    },
+    7: {
+      content: "Nam bibendum sodales viverra.",
+      author: "Omolara Cecilia",
+      avatar: "user-11.png",
+      parent: 3,
+      children: {}
+    },
+    8: {
+      content: "Nunc sapien ipsum, cursus sit amet cursus quis, auctor vitae erat. Vivamus fermentum ut lectus iaculis vehicula.",
+      author: "Valentine Eunike",
+      avatar: "user-19.png",
+      parent: 4,
+      children: {}
+    },
+    9: {
+      content: "Phasellus tellus augue, malesuada eu erat quis, iaculis interdum nibh. Curabitur eros nunc, rutrum quis dolor vel, sodales rhoncus magna."
+      ,
+      author: "Sigimund Urban",
+      avatar: "user-2.png",
+      parent: 3,
+      children: {}
     }
-  ],
-  [
-    {
-      content: "Vestibulum fermentum mattis erat. Sed at diam in ex cursus condimentum. Suspendisse potenti. Nullam fringilla lectus tempus libero posuere, quis semper orci semper."
-    }
-  ]
-]
+  }
+}
+
 
 var db = firebase.database();
 
 // Reset db
 db.ref('/').set({
   topics: {},
-  replies: {}
+  posts: {}
 }).then(() => {
 
   // Reinitialize topics and replies
   var topicsRef = db.ref('topics');
-  var repliesRef = db.ref('replies');
+  var postsRef = db.ref('posts');
 
   var topicsUpdates = {};
-  var repliesUpdates = {};
+  var postsUpdates = {};
 
-  topics.forEach((topic, idx) => {
+  Object.keys(topics).forEach( (topicId, idx) => {
     var topicKey = topicsRef.push().key;
-    topicsUpdates[topicKey] = topic;
+    
 
-    var topicReplies = replies[idx];
-    topicReplies.forEach((reply) => {
-      var replyKey = repliesRef.push().key
-      repliesUpdates[replyKey] = { topic: topicKey, parent: null, ...reply }
-    });
+    var topicPosts = posts[topicId];
+    var idMapping = {}; // Key is the id for the post in the structure
+                        // written at the top of this file, value is the
+                        // firebase key it will live at when pushed
+    Object.keys(topicPosts).forEach( (postId, idx) => {
+      idMapping[postId] = postsRef.push().key;
+    })
 
-  });
+    Object.keys(topicPosts).forEach( (postId, idx) => {
+      var post = Object.assign({}, topicPosts[postId]); // Create a copy, just for good measure
+      if (post.parent) {
+        post.parent = idMapping[post.parent]
+      }
+      if (post.children) {
+        var newChildren = {};
+        for (childId in post.children) {
+          newChildren[idMapping[childId]] = true;
+        }
+        post.children = newChildren;
+      }
+      postsUpdates[topicKey + '/' + idMapping[postId]] = post;
+    })
+
+    var newTopic = Object.assign({}, topics[topicId]);
+    newTopic.root = idMapping[newTopic.root];
+    topicsUpdates[topicKey] = newTopic;
+
+  })
 
   topicsRef.update(topicsUpdates).then(() => {
-    repliesRef.update(repliesUpdates).then(() => {
+    postsRef.update(postsUpdates).then(() => {
       process.exit();
     });
   });
