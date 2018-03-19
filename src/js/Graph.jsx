@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { compose } from 'redux'
 import * as d3 from 'd3'
-import { firebaseConnect, isLoaded } from 'react-redux-firebase'
+import { firebaseConnect, isLoaded, getVal } from 'react-redux-firebase'
 import { selectNode } from './actions'
 
 /*
@@ -45,21 +45,9 @@ class Graph extends React.Component {
   }
 
   componentDidUpdate() {
-    console.log("did update");
-    if (isLoaded(this.props.topics)) {
-      console.log("topics loaded")
-    }
-    if (isLoaded(this.props.posts)) {
-      console.log("posts loaded")
-    }
-    if (isLoaded(this.props.topics) && isLoaded(this.props.posts)) {
-      console.log("updating");
-
-      var topicId = Object.keys(this.props.topics)[0];
-      topic = this.props.topics[topicId];
-
-      posts = d3.entries(this.props.posts[topicId]);
-
+    if (isLoaded(this.props.topic) && isLoaded(this.props.posts)) {
+      topic = this.props.topic;
+      posts = d3.entries(this.props.posts);
       this.updateNodes()
 
       initialized = true;
@@ -223,10 +211,10 @@ class Graph extends React.Component {
   
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, props) => {
   return {
-    topics: state.firebase.data.topics,
-    posts: state.firebase.data.posts
+    topic: getVal(state.firebase, `data/topics/${props.topicId}`),
+    posts: getVal(state.firebase, `data/posts/${props.topicId}`)
   } 
 }
 
@@ -239,9 +227,11 @@ const mapDispatchToProps = dispatch => {
 }
 
 export default compose(
-  firebaseConnect([
-    'topics',
-    'posts'
-  ]),
+  firebaseConnect((props) => {
+    return [
+    `topics/${props.topicId}`,
+    `posts/${props.topicId}`,
+    ]
+  }),
   connect(mapStateToProps, mapDispatchToProps)
 )(Graph)

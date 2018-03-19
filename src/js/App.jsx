@@ -37,7 +37,7 @@ const App = () => (
   <Provider store={store}>
     <div className="app-container">
       <div className="col-left">
-        <Graph />
+        <Graph topicId={'-L7w8-Egmf1Q_R73i9Au'} />
       </div>
       <div className="col-right info">
         <Sidebar />
